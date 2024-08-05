@@ -1,3 +1,4 @@
+import { CheckCheck } from "lucide-react";
 import React, { useState } from "react";
 
 interface Event {
@@ -176,7 +177,7 @@ const Events: React.FC = () => {
             >
               <h1 className="text-xl sm:text-4xl font-extrabold">
                 {selectedEvents.includes(event) ? (
-                  "Selected"
+                  <CheckCheck className="w-7 h-7 sm:w-10 sm:h-10" />
                 ) : (
                   "Select"
                 )}
