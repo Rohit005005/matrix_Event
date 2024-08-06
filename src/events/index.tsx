@@ -59,18 +59,13 @@ const events: Event[] = [
     desc: "Maintain originality and integrity. Understand software/hardware, its algorithms, and design.Complete tasks within specified time limits. Originality and integrity must be maintained.Follow event behavior guidelines.",
     img: "/dsa.jpeg",
   },
-];
+];;
 
 const Events: React.FC = () => {
   const [selectedEvents, setSelectedEvents] = useState<Event[]>([]);
   const [total, setTotal] = useState<number>(0);
-  const [showHackathonForm, setShowHackathonForm] = useState<boolean>(false);
   const [showLiveProjectsForm, setShowLiveProjectsForm] = useState<boolean>(false);
   const [showGamingTournamentForm, setShowGamingTournamentForm] = useState<boolean>(false);
-  const [hackathonDetails, setHackathonDetails] = useState<EventDetails>({
-    participationType: "solo",
-    team: [{ name: "", phone: "", email: "" }],
-  });
   const [liveProjectsDetails, setLiveProjectsDetails] = useState<EventDetails>({
     participationType: "solo",
     team: [{ name: "", phone: "", email: "" }],
@@ -82,11 +77,18 @@ const Events: React.FC = () => {
   const [formErrors, setFormErrors] = useState<string[]>([]);
 
   const handleSelect = (event: Event) => {
-    if (event.name === "HACKATHON" || event.name === "LIVE PROJECTS" || event.name === "GAMING TOURNAMENT") {
+    if (event.name === "HACKATHON") {
+      window.open("https://www.devfolio.com", "_blank");
+      setSelectedEvents((prev) => {
+        if (!prev.some((e) => e.name === event.name)) {
+          return [...prev, event];
+        }
+        return prev;
+      });
+    } else if (event.name === "LIVE PROJECTS" || event.name === "GAMING TOURNAMENT") {
       if (selectedEvents.includes(event)) {
         setSelectedEvents((prev) => prev.filter((e) => e.name !== event.name));
       } else {
-        if (event.name === "HACKATHON") setShowHackathonForm(true);
         if (event.name === "LIVE PROJECTS") setShowLiveProjectsForm(true);
         if (event.name === "GAMING TOURNAMENT") setShowGamingTournamentForm(true);
       }
@@ -98,15 +100,16 @@ const Events: React.FC = () => {
       );
     }
   };
+  
 
   const handleFormChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     index: number | undefined,
-    type: "hackathon" | "liveProjects" | "gamingTournament"
+    type: "liveProjects" | "gamingTournament"
   ) => {
     const { name, value } = e.target;
-    const setDetails = type === "hackathon" ? setHackathonDetails : type === "liveProjects" ? setLiveProjectsDetails : setGamingTournamentDetails;
-    const details = type === "hackathon" ? hackathonDetails : type === "liveProjects" ? liveProjectsDetails : gamingTournamentDetails;
+    const setDetails = type === "liveProjects" ? setLiveProjectsDetails : setGamingTournamentDetails;
+    const details = type === "liveProjects" ? liveProjectsDetails : gamingTournamentDetails;
 
     if (name === "participationType") {
       setDetails((prev) => ({
@@ -121,9 +124,9 @@ const Events: React.FC = () => {
     }
   };
 
-  const handleAddTeamMember = (type: "hackathon" | "liveProjects" | "gamingTournament") => {
-    const setDetails = type === "hackathon" ? setHackathonDetails : type === "liveProjects" ? setLiveProjectsDetails : setGamingTournamentDetails;
-    const details = type === "hackathon" ? hackathonDetails : type === "liveProjects" ? liveProjectsDetails : gamingTournamentDetails;
+  const handleAddTeamMember = (type: "liveProjects" | "gamingTournament") => {
+    const setDetails = type === "liveProjects" ? setLiveProjectsDetails : setGamingTournamentDetails;
+    const details = type === "liveProjects" ? liveProjectsDetails : gamingTournamentDetails;
 
     setDetails((prev) => ({
       ...prev,
@@ -131,9 +134,9 @@ const Events: React.FC = () => {
     }));
   };
 
-  const handleRemoveTeamMember = (index: number, type: "hackathon" | "liveProjects" | "gamingTournament") => {
-    const setDetails = type === "hackathon" ? setHackathonDetails : type === "liveProjects" ? setLiveProjectsDetails : setGamingTournamentDetails;
-    const details = type === "hackathon" ? hackathonDetails : type === "liveProjects" ? liveProjectsDetails : gamingTournamentDetails;
+  const handleRemoveTeamMember = (index: number, type: "liveProjects" | "gamingTournament") => {
+    const setDetails = type === "liveProjects" ? setLiveProjectsDetails : setGamingTournamentDetails;
+    const details = type === "liveProjects" ? liveProjectsDetails : gamingTournamentDetails;
 
     setDetails((prev) => ({
       ...prev,
@@ -141,9 +144,9 @@ const Events: React.FC = () => {
     }));
   };
 
-  const validateForm = (type: "hackathon" | "liveProjects" | "gamingTournament"): boolean => {
+  const validateForm = (type: "liveProjects" | "gamingTournament"): boolean => {
     const errors: string[] = [];
-    const details = type === "hackathon" ? hackathonDetails : type === "liveProjects" ? liveProjectsDetails : gamingTournamentDetails;
+    const details = type === "liveProjects" ? liveProjectsDetails : gamingTournamentDetails;
     details.team.forEach((member, index) => {
       if (!member.name || !member.phone || !member.email) {
         errors.push(`Please fill out all fields for team member ${index + 1}`);
@@ -153,12 +156,11 @@ const Events: React.FC = () => {
     return errors.length === 0;
   };
 
-  const handleSubmitForm = (type: "hackathon" | "liveProjects" | "gamingTournament") => {
+  const handleSubmitForm = (type: "liveProjects" | "gamingTournament") => {
     if (validateForm(type)) {
-      const event = events.find((e) => e.name === (type === "hackathon" ? "HACKATHON" : type === "liveProjects" ? "LIVE PROJECTS" : "GAMING TOURNAMENT"));
+      const event = events.find((e) => e.name === (type === "liveProjects" ? "LIVE PROJECTS" : "GAMING TOURNAMENT"));
       if (event) {
         setSelectedEvents((prev) => [...prev, event]);
-        if (type === "hackathon") setShowHackathonForm(false);
         if (type === "liveProjects") setShowLiveProjectsForm(false);
         if (type === "gamingTournament") setShowGamingTournamentForm(false);
       }
@@ -171,7 +173,11 @@ const Events: React.FC = () => {
 
     selectedEvents.forEach((event) => {
       if (event.name === "GAMING TOURNAMENT") {
-        total += gamingTournamentDetails.participationType === "solo" ? 100 : 400;
+        if (gamingTournamentDetails.participationType === "solo") {
+          total += 100;
+        } else {
+          total += gamingTournamentDetails.team.length * 100;
+        }
       } else if (event.name !== "HACKATHON" && event.name !== "LIVE PROJECTS") {
         otherEventsCount++;
       }
@@ -234,97 +240,6 @@ const Events: React.FC = () => {
           </div>
         ))}
       </div>
-      {showHackathonForm && (
-        <div className="text-white text-center mt-10">
-          <h2 className="text-[#00ffd4] text-4xl sm:text-6xl font-extrabold text-center">
-            Hackathon Registration
-          </h2>
-          <div className="flex flex-col justify-center items-center mt-5">
-            <div className="flex flex-col gap-5 mt-4 w-[80%]">
-              <label className="text-2xl sm:text-4xl">
-                Participation Type:
-                <select
-                  className="bg-black text-white"
-                  name="participationType"
-                  required
-                  value={hackathonDetails.participationType}
-                  onChange={(e) => handleFormChange(e, undefined, "hackathon")}
-                >
-                  <option value="solo">Solo</option>
-                  <option value="team">Team</option>
-                </select>
-              </label>
-              {hackathonDetails.team.map((member, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col gap-5 p-7 sm:p-10 shadow-[0px_0px_0px_1px_#4fd1c5] rounded-2xl"
-                >
-                  <input
-                    className="bg-black text-white text-2xl p-2 shadow-[0px_0px_0px_1px_#4fd1c5] rounded-xl"
-                    required
-                    type="text"
-                    name="name"
-                    placeholder="Name"
-                    value={member.name}
-                    onChange={(e) => handleFormChange(e, index, "hackathon")}
-                  />
-                  <input
-                    className="bg-black text-white text-2xl p-2 shadow-[0px_0px_0px_1px_#4fd1c5] rounded-xl"
-                    required
-                    type="text"
-                    name="phone"
-                    placeholder="Phone"
-                    value={member.phone}
-                    onChange={(e) => handleFormChange(e, index, "hackathon")}
-                  />
-                  <input
-                    className="bg-black text-white text-2xl p-2 shadow-[0px_0px_0px_1px_#4fd1c5] rounded-xl"
-                    required
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={member.email}
-                    onChange={(e) => handleFormChange(e, index, "hackathon")}
-                  />
-                  {hackathonDetails.participationType === "team" &&
-                    index > 0 && (
-                      <button
-                        className="bg-red-700 text-white font-bold text-2xl"
-                        onClick={() => handleRemoveTeamMember(index, "hackathon")}
-                      >
-                        Remove
-                      </button>
-                    )}
-                </div>
-              ))}
-              {hackathonDetails.participationType === "team" &&
-                hackathonDetails.team.length < 4 && (
-                  <button
-                    className="bg-[#00ffd4] text-black font-bold text-3xl"
-                    onClick={() => handleAddTeamMember("hackathon")}
-                  >
-                    Add Team Member
-                  </button>
-                )}
-              <button
-                className="bg-[#00ffd4] text-black font-bold text-3xl"
-                onClick={() => handleSubmitForm("hackathon")}
-              >
-                Submit
-              </button>
-              {formErrors.length > 0 && (
-                <div className="text-red-500 mt-4">
-                  {formErrors.map((error, index) => (
-                    <p key={index} className="text-2xl">
-                      {error}
-                    </p>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
       {showLiveProjectsForm && (
         <div className="text-white text-center mt-10">
           <h2 className="text-[#00ffd4] text-4xl sm:text-6xl font-extrabold text-center">
