@@ -167,13 +167,21 @@ const Events: React.FC = () => {
 
   const calculateTotalPrice = (): number => {
     let total = 0;
+    let otherEventsCount = 0;
+
     selectedEvents.forEach((event) => {
       if (event.name === "GAMING TOURNAMENT") {
         total += gamingTournamentDetails.participationType === "solo" ? 100 : 400;
       } else if (event.name !== "HACKATHON" && event.name !== "LIVE PROJECTS") {
-        total += 50;
+        otherEventsCount++;
       }
     });
+
+    if (otherEventsCount === 1) total += 50;
+    else if (otherEventsCount === 2) total += 80;
+    else if (otherEventsCount === 3) total += 110;
+    else if (otherEventsCount >= 4) total += 150;
+
     return total;
   };
 
